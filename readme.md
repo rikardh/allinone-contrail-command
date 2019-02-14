@@ -1,11 +1,10 @@
 # **All In One Contrail Networking and Openstack Kolla with Contrail Command**
-#### 2019-02-14 by Rikard
 ###### Version 5.0.2-0.360 based
 
->*Before you read on, please understand that you need login credentials for Juniper Networks docker registry below.*
+>*Before you read on, please understand that you need login credentials for Juniper Networks docker registry for this to work.*
 
 I'll cover 2 versions ment for testing/lab use only. For production installations, please refer to installation documents on juniper.net
-These installation methods do not use the GUI of Contrail Command but just an instances.yml file from the command line. This is faster but less intuitive perhaps.
+These installation methods do not use the GUI of Contrail Command but just an instances.yml file to describe the installation. This is faster but may be less intuitive for some.
 ## **AIO**
 An all-in-one install means that all roles will be installed on the same machine. Here we are using the following roles/functions:
 - Contrail Command (New Juniper Networks GUI that includes the Fabric mangement utilities)
