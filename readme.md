@@ -1,18 +1,18 @@
 # **All In One Contrail Networking and Openstack Kolla with Contrail Command**
 ###### Version 5.0.2-0.360 based
 
->*Before you read on, please understand that you need login credentials for Juniper Networks docker registry for this to work.*
+>*Before you read on, please understand that you need login credentials for Juniper Networks' docker registry for this to work.*
 
 I'll cover 2 versions ment for testing/lab use only. For production installations, please refer to installation documents on juniper.net
 These installation methods do not use the GUI of Contrail Command but just an instances.yml file to describe the installation. This is faster but may be less intuitive for some.
 ## **AIO**
-An all-in-one install means that all roles will be installed on the same machine. Here we are using the following roles/functions:
+An all-in-one install means that everything will be installed on the same machine. Here we are using the following roles/functions:
 - Contrail Command (New Juniper Networks GUI that includes the Fabric mangement utilities)
 - Contrail Controller
 - Compute node (which has the "vRouter" installed)
 - Openstack (Openstack Kolla is used)
 
-The instructions below are based on using a virtual machine runing Centos linux. Of course you can use a physical server however a physical bare metal server makes less sense for a lab, IMHO. Choice is yours.
+The instructions below are based on using a virtual machine runing Centos linux. Of course you can use a physical server, however a physical bare metal server makes less sense for a lab, IMHO. Choice is yours.
 
 #### **2 versions of AIO below**
 1. Single NIC for fabric/data and management
@@ -26,7 +26,7 @@ Create a virtual machine. Configure the VM with:
 - Single NIC
 Install Centos 7.5 (1804) minimal (file CentOS-7-x86_64-Minimal-1804.iso)
 - Configure it as per below if you dont have a DHCP server doing it all for you:
->I always choose the root password of "c0ntrail123" for my personal labs because this is the default in the config files and I'm really lazy. The second character is a zero.
+>I always choose the linux root password of "c0ntrail123" for my personal labs because this is the default in the config files and I'm really lazy. The second character is a zero.
 ```
 [root@localhost ~]# cat /etc/centos-release
 CentOS Linux release 7.5.1804 (Core)
@@ -34,14 +34,14 @@ CentOS Linux release 7.5.1804 (Core)
 
 ### **Configure Centos basics**  
 ---
-Set your hostname to "aio" using. 
+I'm setting my hostname to "aio" like this: 
 
    ```
 [root@localhost ~]# hostnamectl set-hostname aio
 ```   
    >(logout and login in again for name to change on the prompt.)  
 
-   Now check which interface we need to configure for IP details:
+   Now check which interface we need to configure for IP details if you havent already configured it during the installation:
 ```
 [root@aio ~]# ip ad
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1
@@ -58,13 +58,13 @@ Set your hostname to "aio" using.
        valid_lft forever preferred_lft forever
 [root@aio ~]#
 ```
-As you can see I'm using “ens160”. You need to edit your interface appropriately unless that config via DHC is what you want.  
-Lets edit with the "vi" editor.
+As you can see I'm using “ens160”. You need to edit your interface config file appropriately unless that config via DHCP is what you want.  
+I use the "vi" editor:
 ```
 [root@aio ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens160
 ```
 >Replace "ens160" in the line above with the name of your interface.  
-Inside "vi" press “i” to insert. Edit. When done press “esc”, then “:” and type “x” to exit saving changes.
+Inside "vi" press “i” to insert. Edit what you need. When done editing, press “esc”, then “:”, type “x” and ENTER to exit saving changes.
 
 My "ifcfg-ens160" looks like this:
 ```
@@ -85,7 +85,7 @@ DNS1=172.30.104.10
 
 ---
 ### **Continue with some packages**...
-Make sure you have internet access and now run:
+Make sure you have internet access and now install docker like this:
 ```
   yum install -y yum-utils device-mapper-persistent-data lvm2
   yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -93,11 +93,11 @@ Make sure you have internet access and now run:
   systemctl start docker
   systemctl enable docker
 ```
-You need 2 files to move forward. Put these in the /root directory of your AIO server. Otherwise you'll need to change the path in the docker command further down where you see "/root...."  
+You need 2 files to move forward. Put these in the /root directory of your AIO server. if you choose another path you'll need to change the path in the docker command further down where you see "/root/\<file>"  
 The files are included in the repo and called:  
 ```
-command_servers.yml
-instances.yml
+command_servers.yml           # Describes Contrail Command install
+instances.yml                 # Describes Contrail/Openstack install
 ```
 You need to change some stuff in them. I have marked changes required with "<>". This is where things usually go wrong like missing information, wrong info or just plain typos. I mean, we are all in a hurry ;)
   
